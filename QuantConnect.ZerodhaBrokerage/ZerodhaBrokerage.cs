@@ -688,21 +688,30 @@ namespace QuantConnect.Brokerages.Zerodha
                 foreach (var item in allOrders.Where(z => z.Status == "OPEN" || z.Status == "TRIGGER PENDING"))
                 {
                     Order order;
+
+                    var itemTotalQty = Convert.ToDecimal(item.Quantity, CultureInfo.InvariantCulture);
+                    var originalQty = Convert.ToDecimal(item.Quantity, CultureInfo.InvariantCulture);
+                    var symbol = _symbolMapper.ConvertZerodhaSymbolToLeanSymbol(item.InstrumentToken);
+                    var time = (DateTime)item.OrderTimestamp;
+                    var price = Convert.ToDecimal(item.Price, CultureInfo.InvariantCulture);
+                    var quantity = item.TransactionType.ToLowerInvariant() == "sell" ? -itemTotalQty : originalQty;
+
                     if (item.OrderType.ToUpperInvariant() == "MARKET")
                     {
-                        order = new MarketOrder { Price = Convert.ToDecimal(item.Price, CultureInfo.InvariantCulture) };
+                        order = new MarketOrder(symbol, quantity, time);
                     }
                     else if (item.OrderType.ToUpperInvariant() == "LIMIT")
                     {
-                        order = new LimitOrder { LimitPrice = Convert.ToDecimal(item.Price, CultureInfo.InvariantCulture) };
+                        order = new LimitOrder(symbol, quantity, price, time);
                     }
                     else if (item.OrderType.ToUpperInvariant() == "SL-M")
                     {
-                        order = new StopMarketOrder { StopPrice = Convert.ToDecimal(item.Price, CultureInfo.InvariantCulture) };
+                        order = new StopMarketOrder(symbol, quantity, price, time);
                     }
                     else if (item.OrderType.ToUpperInvariant() == "SL")
                     {
-                        order = new StopLimitOrder { StopPrice = Convert.ToDecimal(item.TriggerPrice, CultureInfo.InvariantCulture), LimitPrice = Convert.ToDecimal(item.Price, CultureInfo.InvariantCulture) };
+                        var stopPrice = Convert.ToDecimal(item.TriggerPrice, CultureInfo.InvariantCulture);
+                        order = new StopLimitOrder(symbol, quantity, stopPrice, price, time);
                     }
                     else
                     {
@@ -711,14 +720,8 @@ namespace QuantConnect.Brokerages.Zerodha
                         continue;
                     }
 
-                    var itemTotalQty = item.Quantity;
-                    var originalQty = item.Quantity;
-                    order.Quantity = item.TransactionType.ToLowerInvariant() == "sell" ? -itemTotalQty : originalQty;
-                    order.BrokerId = new List<string> { item.OrderId };
-                    order.Symbol = _symbolMapper.ConvertZerodhaSymbolToLeanSymbol(item.InstrumentToken);
-                    order.Time = (DateTime)item.OrderTimestamp;
+                    order.BrokerId.Add(item.OrderId);
                     order.Status = ConvertOrderStatus(item);
-                    order.Price = item.Price;
                     list.Add(order);
                 }
                 foreach (var item in list)
