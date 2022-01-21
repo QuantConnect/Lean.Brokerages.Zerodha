@@ -3,7 +3,9 @@ name: Build & Test
 on:
   push:
     branches: ['*']
-
+  pull_request:
+    branches: [master]
+    
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -35,7 +37,7 @@ jobs:
         run: mv Lean ../Lean
 
       - name: Build
-        run: dotnet build /p:Configuration=Release /v:quiet /p:WarningLevel=1 QuantConnect.TemplateBrokerage.sln
+        run: dotnet build /p:Configuration=Release /v:quiet /p:WarningLevel=1 QuantConnect.ZerodhaBrokerage.sln
 
       - name: Run Tests
-        run: dotnet test ./QuantConnect.TemplateBrokerage.Tests/bin/Release/QuantConnect.TemplateBrokerage.Tests.dll
+        run: dotnet test ./QuantConnect.ZerodhaBrokerage.Tests/bin/Release/QuantConnect.ZerodhaBrokerage.Tests.dll
