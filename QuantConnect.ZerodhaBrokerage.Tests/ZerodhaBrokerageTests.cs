@@ -500,7 +500,7 @@ namespace QuantConnect.Tests.Brokerages.Zerodha
 
             // pick a security with low, but some, volume
             var symbol = Symbols.EURUSD;
-            var order = new MarketOrder(symbol, qty, DateTime.UtcNow) { Id = 1 };
+            var order = new MarketOrder(symbol, qty, DateTime.UtcNow);
             OrderProvider.Add(order);
             Brokerage.PlaceOrder(order);
 
