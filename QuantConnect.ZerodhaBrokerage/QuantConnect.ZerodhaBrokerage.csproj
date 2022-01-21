@@ -1,18 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <TargetFramework>net5.0</TargetFramework>
-    <Product>QuantConnect.TemplateBrokerage</Product>
-    <AssemblyName>QuantConnect.TemplateBrokerage</AssemblyName>
-    <RootNamespace>QuantConnect.TemplateBrokerage</RootNamespace>
-    <AssemblyTitle>QuantConnect.TemplateBrokerage</AssemblyTitle>
+    <Product>QuantConnect.ZerodhaBrokerage</Product>
+    <AssemblyName>QuantConnect.ZerodhaBrokerage</AssemblyName>
+    <RootNamespace>QuantConnect.ZerodhaBrokerage</RootNamespace>
+    <AssemblyTitle>QuantConnect.ZerodhaBrokerage</AssemblyTitle>
     <OutputType>Library</OutputType>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Description>QuantConnect LEAN Template Brokerage: Brokerage Template plugin for Lean</Description>
+    <Description>QuantConnect LEAN Zerodha Brokerage</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -25,11 +25,18 @@
   <ItemGroup>
     <Compile Include="..\..\Lean\Common\Properties\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
+	
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+	<PackageReference Include="NodaTime" Version="3.0.5" />
+	<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="CsvHelper" Version="19.0.0" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\..\Lean\Brokerages\QuantConnect.Brokerages.csproj" />
-    <ProjectReference Include="..\..\Lean\Common\QuantConnect.csproj" />
+	<ProjectReference Include="..\..\Lean\Logging\QuantConnect.Logging.csproj" />
+	<ProjectReference Include="..\..\Lean\Configuration\QuantConnect.Configuration.csproj" />
+	<ProjectReference Include="..\..\Lean\Common\QuantConnect.csproj" />
+	<ProjectReference Include="..\..\Lean\Brokerages\QuantConnect.Brokerages.csproj" />
   </ItemGroup>
+	
 </Project>
