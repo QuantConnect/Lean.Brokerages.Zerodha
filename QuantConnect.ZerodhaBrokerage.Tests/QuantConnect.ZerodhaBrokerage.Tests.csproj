@@ -28,10 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-	  <ProjectReference Include="..\..\Lean\Logging\QuantConnect.Logging.csproj" />
-	  <ProjectReference Include="..\..\Lean\Configuration\QuantConnect.Configuration.csproj" />
       <ProjectReference Include="..\..\Lean\Tests\QuantConnect.Tests.csproj" />
-	  <ProjectReference Include="..\..\Lean\Common\QuantConnect.csproj" />
 	  <ProjectReference Include="..\..\Lean\Brokerages\QuantConnect.Brokerages.csproj" />
 	  <ProjectReference Include="..\..\Lean\Engine\QuantConnect.Lean.Engine.csproj" />
       <ProjectReference Include="..\QuantConnect.ZerodhaBrokerage\QuantConnect.ZerodhaBrokerage.csproj" />
