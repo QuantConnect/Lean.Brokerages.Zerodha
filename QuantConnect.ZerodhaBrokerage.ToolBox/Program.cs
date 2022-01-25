@@ -13,9 +13,10 @@
  * limitations under the License.
 */
 
-using QuantConnect.ToolBox;
 using QuantConnect.Configuration;
 using static QuantConnect.Configuration.ApplicationParser;
+using QuantConnect.ToolBox.ZerodhaDownloader;
+using System;
 
 namespace QuantConnect.TemplateBrokerage.ToolBox
 {
@@ -37,12 +38,15 @@ namespace QuantConnect.TemplateBrokerage.ToolBox
             var targetAppName = targetApp.ToString();
             if (targetAppName.Contains("download") || targetAppName.Contains("dl"))
             {
-                var downloader = new TemplateBrokerageDownloader();
-            }
-            else if (targetAppName.Contains("updater") || targetAppName.EndsWith("spu"))
-            {
-                new ExchangeInfoUpdater(new TemplateExchangeInfoDownloader())
-                    .Run();
+                var fromDate = Parse.DateTimeExact(GetParameterOrExit(optionsObject, "from-date"), "yyyyMMdd-HH:mm:ss");
+                var resolution = optionsObject.ContainsKey("resolution") ? optionsObject["resolution"].ToString() : "";
+                var market = optionsObject.ContainsKey("market") ? optionsObject["market"].ToString() : "";
+                var securityType = optionsObject.ContainsKey("security-type") ? optionsObject["security-type"].ToString() : "";
+                var tickers = ToolboxArgumentParser.GetTickers(optionsObject);
+                var toDate = optionsObject.ContainsKey("to-date")
+                    ? Parse.DateTimeExact(optionsObject["to-date"].ToString(), "yyyyMMdd-HH:mm:ss")
+                    : DateTime.UtcNow;
+                ZerodhaDataDownloaderProgram.ZerodhaDataDownloader(tickers, market, resolution, securityType, fromDate, toDate);
             }
             else
             {

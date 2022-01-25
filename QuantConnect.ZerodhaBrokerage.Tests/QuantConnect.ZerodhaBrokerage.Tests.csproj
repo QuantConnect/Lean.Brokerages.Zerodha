@@ -9,14 +9,15 @@
         <Copyright>Copyright ©  2021</Copyright>
         <TestProjectType>UnitTest</TestProjectType>
         <OutputPath>bin\$(Configuration)\</OutputPath>
-        <Product>QuantConnect.TemplateBrokerage.Tests</Product>
-        <AssemblyName>QuantConnect.TemplateBrokerage.Tests</AssemblyName>
-        <RootNamespace>QuantConnect.TemplateBrokerage.Tests</RootNamespace>
-        <AssemblyTitle>QuantConnect.TemplateBrokerage.Tests</AssemblyTitle>
+        <Product>QuantConnect.ZerodhaBrokerage.Tests</Product>
+        <AssemblyName>QuantConnect.ZerodhaBrokerage.Tests</AssemblyName>
+        <RootNamespace>QuantConnect.ZerodhaBrokerage.Tests</RootNamespace>
+        <AssemblyTitle>QuantConnect.ZerodhaBrokerage.Tests</AssemblyTitle>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     </PropertyGroup>
 
     <ItemGroup>
+		<PackageReference Include="Moq" Version="4.16.1" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
         <PackageReference Include="NUnit" Version="3.13.1" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.17.0">
@@ -25,12 +26,13 @@
         </PackageReference>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
     </ItemGroup>
-
+	
     <ItemGroup>
       <ProjectReference Include="..\..\Lean\Tests\QuantConnect.Tests.csproj" />
-      <ProjectReference Include="..\QuantConnect.TemplateBrokerage\QuantConnect.TemplateBrokerage.csproj" />
+	  <ProjectReference Include="..\..\Lean\Engine\QuantConnect.Lean.Engine.csproj" />
+      <ProjectReference Include="..\QuantConnect.ZerodhaBrokerage\QuantConnect.ZerodhaBrokerage.csproj" />
     </ItemGroup>
-
+	
     <ItemGroup>
         <None Remove="config.json" />
         <Content Include="config.json">
