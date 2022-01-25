@@ -14,7 +14,7 @@
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <Description>QuantConnect LEAN Template Brokerage: Brokerage Template toolbox plugin for Lean</Description>
+        <Description>QuantConnect LEAN Zerodha Brokerage: Brokerage toolbox plugin for Lean</Description>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <DebugType>full</DebugType>
@@ -27,10 +27,6 @@
     <ItemGroup>
         <Compile Include="..\..\Lean\Common\Properties\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
     </ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="NodaTime" Version="3.0.5" />
-	</ItemGroup>
 	
     <ItemGroup>
 	  <ProjectReference Include="..\QuantConnect.ZerodhaBrokerage\QuantConnect.ZerodhaBrokerage.csproj" />
