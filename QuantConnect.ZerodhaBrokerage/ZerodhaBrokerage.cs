@@ -250,7 +250,7 @@ namespace QuantConnect.Brokerages.Zerodha
                     return;
                 }
 
-                if (orderUpdate.Status == "CANCELLED")
+                if (orderUpdate.Status.ToUpperInvariant() == "CANCELLED")
                 {
                     Order outOrder;
                     CachedOrderIDs.TryRemove(order.Id, out outOrder);
@@ -258,7 +258,7 @@ namespace QuantConnect.Brokerages.Zerodha
                     _fills.TryRemove(order.Id, out ignored);
                 }
 
-                if (orderUpdate.Status == "REJECTED")
+                if (orderUpdate.Status.ToUpperInvariant() == "REJECTED")
                 {
                     Order outOrder;
                     CachedOrderIDs.TryRemove(order.Id, out outOrder);
@@ -272,7 +272,7 @@ namespace QuantConnect.Brokerages.Zerodha
                     var symbol = _symbolMapper.ConvertZerodhaSymbolToLeanSymbol(orderUpdate.InstrumentToken);
                     var fillPrice = orderUpdate.AveragePrice;
                     decimal cumulativeFillQuantity = orderUpdate.FilledQuantity;
-                    var direction = orderUpdate.TransactionType == "SELL" ? OrderDirection.Sell : OrderDirection.Buy;
+                    var direction = orderUpdate.TransactionType.ToUpperInvariant() == "SELL" ? OrderDirection.Sell : OrderDirection.Buy;
                     var updTime = orderUpdate.OrderTimestamp.GetValueOrDefault();
 
                     var security = _securityProvider.GetSecurity(order.Symbol);
@@ -692,7 +692,8 @@ namespace QuantConnect.Brokerages.Zerodha
             //Only loop if there are any actual orders inside response
             if (allOrders.Count > 0)
             {
-                foreach (var item in allOrders.Where(z => z.Status == "OPEN" || z.Status == "TRIGGER PENDING"))
+                foreach (var item in allOrders.Where(z => z.Status.ToUpperInvariant() == "OPEN" || 
+                                                        z.Status.ToUpperInvariant() == "TRIGGER PENDING"))
                 {
                     Order order;
 
@@ -839,7 +840,7 @@ namespace QuantConnect.Brokerages.Zerodha
             decimal amt = 0m;
             var list = new List<CashAmount>();
             var response = _kite.GetMargins();
-            if (_tradingSegment == "EQUITY")
+            if (_tradingSegment.ToUpperInvariant() == "EQUITY")
             {
                 amt = Convert.ToDecimal(response.Equity.Available.Cash, CultureInfo.InvariantCulture);
             }
