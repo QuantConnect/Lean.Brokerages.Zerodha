@@ -26,11 +26,15 @@ For more information about the Zerodha brokerage, see the [QuantConnect-Zerodha 
 
 ## Using the Brokerage Plugin
   
-### QuantConnect Cloud
+### Deploying Zerodha with VSCode User Interace
 
-  This plugin is integrated in the QuantConnect Cloud Platform where you can use this integration with a simple visual interface, and harness the QuantConnect Live Data Feed. For most users this is substantially cheaper and easier than self-hosting. For more information see the [Zerodha brokerage documentation](https://www.quantconnect.com/docs/v2/our-platform/live-trading/brokerages/zerodha). 
+  You can deploy using a visual interface in the QuantConnect cloud. For instructions, see the [QuantConnect-Zerodha brokerage Integration Page](https://www.quantconnect.com/docs/v2/our-platform/live-trading/brokerages/zerodha). 
   
-### Locally
+  ![deploy-zerodha](https://user-images.githubusercontent.com/38889814/188248274-e9801f4b-ec42-4b05-bba4-77b1ad58ba93.gif)
+
+  In the QuantConnect Cloud Platform, you can harness the QuantConnect Live Data Feed. For most users, this is substantially cheaper and easier than self-hosting.
+  
+### Deploying Zerodha with LEAN CLI
 
 Follow these steps to start local live trading with the Zerodha brokerage:
 
