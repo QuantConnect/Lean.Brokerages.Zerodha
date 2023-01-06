@@ -27,6 +27,7 @@ using QuantConnect.Orders;
 using QuantConnect.Securities;
 using QuantConnect.Tests.Common.Securities;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -139,8 +140,9 @@ namespace QuantConnect.Tests.Brokerages.Zerodha
                 // by brokerages to track holdings
                 SecurityProvider[accountHolding.Symbol] = CreateSecurity(accountHolding.Symbol);
             }
-            brokerage.OrderStatusChanged += (sender, args) =>
+            brokerage.OrdersStatusChanged += (sender, argss) =>
             {
+                var args = argss.Single();
                 Log.Trace("");
                 Log.Trace("ORDER STATUS CHANGED: " + args);
                 Log.Trace("");
@@ -326,14 +328,14 @@ namespace QuantConnect.Tests.Brokerages.Zerodha
             var order = PlaceZerodhaOrderWaitForStatus(parameters.CreateLongOrder(GetDefaultQuantity()), parameters.ExpectedStatus);
 
             var canceledOrderStatusEvent = new ManualResetEvent(false);
-            EventHandler<OrderEvent> orderStatusCallback = (sender, fill) =>
+            EventHandler<List<OrderEvent>> orderStatusCallback = (sender, fill) =>
             {
-                if (fill.Status == OrderStatus.Canceled)
+                if (fill.Single().Status == OrderStatus.Canceled)
                 {
                     canceledOrderStatusEvent.Set();
                 }
             };
-            Brokerage.OrderStatusChanged += orderStatusCallback;
+            Brokerage.OrdersStatusChanged += orderStatusCallback;
             var cancelResult = false;
             try
             {
@@ -485,8 +487,9 @@ namespace QuantConnect.Tests.Brokerages.Zerodha
             var qty = 1000000m;
             var remaining = qty;
             var sync = new object();
-            Brokerage.OrderStatusChanged += (sender, orderEvent) =>
+            Brokerage.OrdersStatusChanged += (sender, orderEvents) =>
             {
+                var orderEvent = orderEvents.Single();
                 lock (sync)
                 {
                     remaining -= orderEvent.FillQuantity;
@@ -585,8 +588,9 @@ namespace QuantConnect.Tests.Brokerages.Zerodha
         {
             var requiredStatusEvent = new ManualResetEvent(false);
             var desiredStatusEvent = new ManualResetEvent(false);
-            EventHandler<OrderEvent> brokerageOnOrderStatusChanged = (sender, args) =>
+            EventHandler<List<OrderEvent>> brokerageOnOrderStatusChanged = (sender, argss) =>
             {
+                var args = argss.Single();
                 // no matter what, every order should fire at least one of these
                 if (args.Status == OrderStatus.Submitted || args.Status == OrderStatus.Invalid)
                 {
@@ -605,7 +609,7 @@ namespace QuantConnect.Tests.Brokerages.Zerodha
                 }
             };
 
-            Brokerage.OrderStatusChanged += brokerageOnOrderStatusChanged;
+            Brokerage.OrdersStatusChanged += brokerageOnOrderStatusChanged;
 
             OrderProvider.Add(order);
             if (!Brokerage.PlaceOrder(order) && !allowFailedSubmission)
@@ -618,7 +622,7 @@ namespace QuantConnect.Tests.Brokerages.Zerodha
             desiredStatusEvent.WaitOneAssertFail((int)(1000 * secondsTimeout), "OrderStatus " + expectedStatus + " was not encountered within the timeout. Order Id:" + order.Id);
             
 
-            Brokerage.OrderStatusChanged -= brokerageOnOrderStatusChanged;
+            Brokerage.OrdersStatusChanged -= brokerageOnOrderStatusChanged;
 
             return order;
         }
@@ -650,8 +654,9 @@ namespace QuantConnect.Tests.Brokerages.Zerodha
             }
 
             var filledResetEvent = new ManualResetEvent(false);
-            EventHandler<OrderEvent> brokerageOnOrderStatusChanged = (sender, args) =>
+            EventHandler<List<OrderEvent>> brokerageOnOrderStatusChanged = (sender, argss) =>
             {
+                var args = argss.Single();
                 if (args.Status == OrderStatus.Filled)
                 {
                     filledResetEvent.Set();
@@ -663,7 +668,7 @@ namespace QuantConnect.Tests.Brokerages.Zerodha
                 }
             };
 
-            Brokerage.OrderStatusChanged += brokerageOnOrderStatusChanged;
+            Brokerage.OrdersStatusChanged += brokerageOnOrderStatusChanged;
 
             Log.Trace("");
             Log.Trace("MODIFY UNTIL FILLED: " + order);
@@ -690,7 +695,7 @@ namespace QuantConnect.Tests.Brokerages.Zerodha
                 }
             }
 
-            Brokerage.OrderStatusChanged -= brokerageOnOrderStatusChanged;
+            Brokerage.OrdersStatusChanged -= brokerageOnOrderStatusChanged;
         }
 
         /// <summary>
