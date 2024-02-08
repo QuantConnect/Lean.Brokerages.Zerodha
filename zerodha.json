@@ -1,0 +1,17 @@
+{
+	"description": "The Zerodha integration provides access to Indian Equities on the NSE and BSE, and a streaming data feed. On our cloud platform, we only support live trading.",
+	
+	"platforms-features": [
+		{
+			"Platforms": ["Cloud Platform", "Local Platform", "LEAN CLI"],
+			"Download Data": [0,1,1],
+			"Backtesting": [0,1,1],
+			"Optimization": [0,1,1],
+			"Live Trading":	[1,1,1]
+		}
+	],
+	"order-types": [ "Market", "Limit", "Stop Market", "Stop Limit"],
+	"assets": [ "Equity" ], 
+	"brokerage-url": "https://zerodha.com/",
+	"documentation": "/docs/v2/cloud-platform/live-trading/brokerages/zerodha"
+}
