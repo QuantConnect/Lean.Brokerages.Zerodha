@@ -15,7 +15,11 @@ jobs:
     container:
         image: quantconnect/lean:foundation
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Free space
+        run: df -h && rm -rf /opt/hostedtoolcache* && df -h
 
       - name: Checkout Lean Same Branch
         id: lean-same-branch
@@ -36,8 +40,14 @@ jobs:
       - name: Move Lean
         run: mv Lean ../Lean
 
-      - name: Build
-        run: dotnet build /p:Configuration=Release /v:quiet /p:WarningLevel=1 QuantConnect.ZerodhaBrokerage.sln
-
-      - name: Run Tests
-        run: dotnet test ./QuantConnect.ZerodhaBrokerage.Tests/bin/Release/QuantConnect.ZerodhaBrokerage.Tests.dll
+      - name: Build and Run
+        uses: addnab/docker-run-action@v3
+        with:
+          image: quantconnect/lean:foundation
+          options: --workdir /__w/Lean.Brokerages.Zerodha/Lean.Brokerages.Zerodha -v /home/runner/work:/__w
+          shell: bash
+          run: |
+            # Build
+            dotnet build /p:Configuration=Release /v:quiet /p:WarningLevel=1 QuantConnect.ZerodhaBrokerage.sln
+            # Run Tests
+            dotnet test ./QuantConnect.ZerodhaBrokerage.Tests/bin/Release/QuantConnect.ZerodhaBrokerage.Tests.dll
