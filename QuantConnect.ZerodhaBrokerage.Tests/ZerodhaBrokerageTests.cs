@@ -260,7 +260,7 @@ namespace QuantConnect.Tests.Brokerages.Zerodha
             var algorithm = new Mock<IAlgorithm>();
             algorithm.Setup(a => a.Transactions).Returns(transactions);
             algorithm.Setup(a => a.BrokerageModel).Returns(new ZerodhaBrokerageModel());
-            algorithm.Setup(a => a.Portfolio).Returns(new SecurityPortfolioManager(securities, transactions));
+            algorithm.Setup(a => a.Portfolio).Returns(new SecurityPortfolioManager(securities, transactions, new AlgorithmSettings()));
 
             var accessToken = Config.Get("zerodha-access-token");
             var apiKey = Config.Get("zerodha-api-key");

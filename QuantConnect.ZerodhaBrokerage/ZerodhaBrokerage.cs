@@ -692,7 +692,7 @@ namespace QuantConnect.Brokerages.Zerodha
             //Only loop if there are any actual orders inside response
             if (allOrders.Count > 0)
             {
-                foreach (var item in allOrders.Where(z => z.Status.ToUpperInvariant() == "OPEN" || 
+                foreach (var item in allOrders.Where(z => z.Status.ToUpperInvariant() == "OPEN" ||
                                                         z.Status.ToUpperInvariant() == "TRIGGER PENDING"))
                 {
                     Order order;
@@ -1300,10 +1300,10 @@ namespace QuantConnect.Brokerages.Zerodha
         {
             try
             {
-                var productId = 174;
-                var userId = Config.GetInt("job-user-id");
-                var token = Config.Get("api-access-token");
-                var organizationId = Config.Get("job-organization-id", null);
+                const int productId = 174;
+                var userId = Globals.UserId;
+                var token = Globals.UserToken;
+                var organizationId = Globals.OrganizationID;
                 // Verify we can authenticate with this user and token
                 var api = new ApiConnection(userId, token);
                 if (!api.Connected)
