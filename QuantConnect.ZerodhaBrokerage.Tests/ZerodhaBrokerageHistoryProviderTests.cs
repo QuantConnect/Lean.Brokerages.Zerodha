@@ -31,6 +31,8 @@ namespace QuantConnect.Tests.Brokerages.Zerodha
         {
             get
             {
+                TestGlobals.Initialize();
+
                 return new[]
                 {
                     // valid parameters
@@ -50,6 +52,9 @@ namespace QuantConnect.Tests.Brokerages.Zerodha
 
                     // invalid data type
                     new TestCaseData(Symbols.SBIN, Resolution.Minute, Time.OneHour, typeof(QuoteBar), true),
+
+                    // invalid market
+                    new TestCaseData(Symbol.Create("SBIN", SecurityType.Equity, Market.USA), Resolution.Minute, Time.OneHour, typeof(TradeBar), true),
                 };
             }
         }

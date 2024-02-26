@@ -112,6 +112,7 @@ namespace QuantConnect.Brokerages.Zerodha
         private bool _historySecurityTypeErrorFlag;
         private bool _historyResolutionErrorFlag;
         private bool _historyDateRangeErrorFlag;
+        private bool _historyMarketErrorFlag;
 
         #endregion Declarations
 
@@ -882,6 +883,17 @@ namespace QuantConnect.Brokerages.Zerodha
                     OnMessage(new BrokerageMessageEvent(BrokerageMessageType.Warning, "InvalidSecurityType",
                         $"{request.Symbol.SecurityType} security type not supported, no history returned"));
                     _historySecurityTypeErrorFlag = true;
+                }
+                return null;
+            }
+
+            if (request.Symbol.ID.Market != Market.India)
+            {
+                if (!_historyMarketErrorFlag)
+                {
+                    OnMessage(new BrokerageMessageEvent(BrokerageMessageType.Warning, "InvalidMarket",
+                        $"{request.Symbol.ID.Market} market not supported, no history returned"));
+                    _historyMarketErrorFlag = true;
                 }
                 return null;
             }
