@@ -27,74 +27,73 @@ namespace QuantConnect.Tests.Brokerages.Zerodha
     [TestFixture, Ignore("This test requires a configured and active Zerodha account")]
     public class ZerodhaBrokerageHistoryProviderTests
     {
-            private static TestCaseData[] TestParameters
+        private static TestCaseData[] TestParameters
+        {
+            get
             {
-                get
+                return new[]
                 {
-                    return new[]
-                    {
                     // valid parameters
-                    new TestCaseData(Symbols.SBIN, Resolution.Tick, Time.OneMinute, false),
-                    new TestCaseData(Symbols.SBIN, Resolution.Second, Time.OneMinute, false),
-                    new TestCaseData(Symbols.SBIN, Resolution.Minute, Time.OneHour, false),
-                    new TestCaseData(Symbols.SBIN, Resolution.Hour, Time.OneDay, false),
-                    new TestCaseData(Symbols.SBIN, Resolution.Daily, TimeSpan.FromDays(15), false),
+                    new TestCaseData(Symbols.SBIN, Resolution.Minute, Time.OneHour, typeof(TradeBar), false),
+                    new TestCaseData(Symbols.SBIN, Resolution.Hour, Time.OneDay, typeof(TradeBar), false),
+                    new TestCaseData(Symbols.SBIN, Resolution.Daily, TimeSpan.FromDays(15), typeof(TradeBar), false),
 
-                    // invalid period, throws "System.ArgumentException : Invalid date range specified"
-                    new TestCaseData(Symbols.SBIN, Resolution.Daily, TimeSpan.FromDays(-15), true),
+                    // invalid period
+                    new TestCaseData(Symbols.SBIN, Resolution.Daily, TimeSpan.FromDays(-15), typeof(TradeBar), true),
 
-                    // invalid security type, throws "System.ArgumentException : Invalid security type: Forex"
-                    new TestCaseData(Symbols.EURUSD, Resolution.Daily, TimeSpan.FromDays(15), true)
+                    // invalid security type
+                    new TestCaseData(Symbols.EURUSD, Resolution.Daily, TimeSpan.FromDays(15), typeof(TradeBar), true),
+
+                    // invalid resolution
+                    new TestCaseData(Symbols.SBIN, Resolution.Tick, Time.OneMinute, typeof(TradeBar), true),
+                    new TestCaseData(Symbols.SBIN, Resolution.Second, Time.OneMinute, typeof(TradeBar), true),
+
+                    // invalid data type
+                    new TestCaseData(Symbols.SBIN, Resolution.Minute, Time.OneHour, typeof(QuoteBar), true),
                 };
-                }
             }
+        }
 
-            [Test, TestCaseSource(nameof(TestParameters))]
-            public void GetsHistory(Symbol symbol, Resolution resolution, TimeSpan period, bool throwsException)
+        [Test, TestCaseSource(nameof(TestParameters))]
+        public void GetsHistory(Symbol symbol, Resolution resolution, TimeSpan period, Type dataType, bool unsupported)
+        {
+            var accessToken = Config.Get("zerodha-access-token");
+            var apiKey = Config.Get("zerodha-api-key");
+            var tradingSegment = Config.Get("zerodha-trading-segment");
+            var productType = Config.Get("zerodha-product-type");
+            var brokerage = new ZerodhaBrokerage(tradingSegment, productType, apiKey, accessToken, null, null, null);
+
+            var now = DateTime.UtcNow;
+
+            var request = new HistoryRequest(now.Add(-period),
+                now,
+                dataType,
+                symbol,
+                resolution,
+                SecurityExchangeHours.AlwaysOpen(TimeZones.Kolkata),
+                TimeZones.Kolkata,
+                Resolution.Minute,
+                false,
+                false,
+                DataNormalizationMode.Adjusted,
+                TickType.Trade);
+
+            var history = brokerage.GetHistory(request);
+
+            if (unsupported)
             {
-                TestDelegate test = () =>
-                {
-                    var accessToken = Config.Get("zerodha-access-token");
-                    var apiKey = Config.Get("zerodha-api-key"); 
-                    var tradingSegment = Config.Get("zerodha-trading-segment");
-                    var productType = Config.Get("zerodha-product-type");
-                    var brokerage = new ZerodhaBrokerage(tradingSegment, productType, apiKey, accessToken, null,null,null);
-
-                    var now = DateTime.UtcNow;
-
-                    var request = new HistoryRequest(now.Add(-period),
-                        now,
-                        typeof(QuoteBar),
-                        symbol,
-                        resolution,
-                        SecurityExchangeHours.AlwaysOpen(TimeZones.Kolkata),
-                        TimeZones.Kolkata,
-                        Resolution.Minute,
-                        false,
-                        false,
-                        DataNormalizationMode.Adjusted,
-                        TickType.Quote)
-                    { };
-
-
-                    var history = brokerage.GetHistory(request);
-
-                    foreach (var slice in history)
-                    {
-                        Log.Trace("{0}: {1} - {2} / {3}", slice.Time, slice.Symbol, slice.Price, slice.IsFillForward);
-                    }
-
-                    Log.Trace("Base currency: " + brokerage.AccountBaseCurrency);
-                };
-
-                if (throwsException)
-                {
-                    Assert.Throws<ArgumentException>(test);
-                }
-                else
-                {
-                    Assert.DoesNotThrow(test);
-                }
+                Assert.IsNull(history);
+                return;
             }
+
+            Assert.IsNotNull(history);
+
+            foreach (var slice in history)
+            {
+                Log.Trace("{0}: {1} - {2} / {3}", slice.Time, slice.Symbol, slice.Price, slice.IsFillForward);
             }
+
+            Log.Trace("Base currency: " + brokerage.AccountBaseCurrency);
+        }
+    }
 }
