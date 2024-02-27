@@ -109,6 +109,10 @@ namespace QuantConnect.Brokerages.Zerodha
         private DateTime _lastTradeTickTime;
         private bool _historyDataTypeErrorFlag;
         private bool _isInitialized;
+        private bool _historySecurityTypeErrorFlag;
+        private bool _historyResolutionErrorFlag;
+        private bool _historyDateRangeErrorFlag;
+        private bool _historyMarketErrorFlag;
 
         #endregion Declarations
 
@@ -859,43 +863,61 @@ namespace QuantConnect.Brokerages.Zerodha
         /// <returns>An enumerable of bars covering the span specified in the request</returns>
         public override IEnumerable<BaseData> GetHistory(HistoryRequest request)
         {
-            if (request.DataType != typeof(TradeBar) && !_historyDataTypeErrorFlag)
+            if (request.DataType != typeof(TradeBar))
             {
-                OnMessage(new BrokerageMessageEvent(BrokerageMessageType.Warning, "InvalidBarType",
-                    $"{request.DataType} type not supported, no history returned"));
-                _historyDataTypeErrorFlag = true;
-                yield break;
+                if (!_historyDataTypeErrorFlag)
+                {
+                    OnMessage(new BrokerageMessageEvent(BrokerageMessageType.Warning, "InvalidBarType",
+                        $"{request.DataType} type not supported, no history returned"));
+                    _historyDataTypeErrorFlag = true;
+                }
+                return null;
             }
 
-            if (request.Symbol.SecurityType != SecurityType.Equity && request.Symbol.SecurityType != SecurityType.Future && request.Symbol.SecurityType != SecurityType.Option)
+            if (request.Symbol.SecurityType != SecurityType.Equity &&
+                request.Symbol.SecurityType != SecurityType.Future &&
+                request.Symbol.SecurityType != SecurityType.Option)
             {
-                OnMessage(new BrokerageMessageEvent(BrokerageMessageType.Warning, "InvalidSecurityType",
-                    $"{request.Symbol.SecurityType} security type not supported, no history returned"));
-                yield break;
+                if (!_historySecurityTypeErrorFlag)
+                {
+                    OnMessage(new BrokerageMessageEvent(BrokerageMessageType.Warning, "InvalidSecurityType",
+                        $"{request.Symbol.SecurityType} security type not supported, no history returned"));
+                    _historySecurityTypeErrorFlag = true;
+                }
+                return null;
+            }
+
+            if (request.Symbol.ID.Market != Market.India)
+            {
+                if (!_historyMarketErrorFlag)
+                {
+                    OnMessage(new BrokerageMessageEvent(BrokerageMessageType.Warning, "InvalidMarket",
+                        $"{request.Symbol.ID.Market} market not supported, no history returned"));
+                    _historyMarketErrorFlag = true;
+                }
+                return null;
             }
 
             if (request.Resolution == Resolution.Tick || request.Resolution == Resolution.Second)
             {
-                OnMessage(new BrokerageMessageEvent(BrokerageMessageType.Warning, "InvalidResolution",
-                    $"{request.Resolution} resolution not supported, no history returned"));
-                yield break;
+                if (!_historyResolutionErrorFlag)
+                {
+                    OnMessage(new BrokerageMessageEvent(BrokerageMessageType.Warning, "InvalidResolution",
+                        $"{request.Resolution} resolution not supported, no history returned"));
+                    _historyResolutionErrorFlag = true;
+                }
+                return null;
             }
 
             if (request.StartTimeUtc >= request.EndTimeUtc)
             {
-                OnMessage(new BrokerageMessageEvent(BrokerageMessageType.Warning, "InvalidDateRange",
-                    "The history request start date must precede the end date, no history returned"));
-                yield break;
-            }
-
-            if (request.Symbol.ID.SecurityType != SecurityType.Equity && request.Symbol.ID.SecurityType != SecurityType.Future && request.Symbol.ID.SecurityType != SecurityType.Option)
-            {
-                throw new ArgumentException("Zerodha does not support this security type: " + request.Symbol.ID.SecurityType);
-            }
-
-            if (request.StartTimeUtc >= request.EndTimeUtc)
-            {
-                throw new ArgumentException("Invalid date range specified");
+                if (!_historyDateRangeErrorFlag)
+                {
+                    OnMessage(new BrokerageMessageEvent(BrokerageMessageType.Warning, "InvalidDateRange",
+                        "The history request start date must precede the end date, no history returned"));
+                    _historyDateRangeErrorFlag = true;
+                }
+                return null;
             }
 
             var history = Enumerable.Empty<BaseData>();
@@ -924,10 +946,7 @@ namespace QuantConnect.Brokerages.Zerodha
                 }
             }
 
-            foreach (var baseData in history)
-            {
-                yield return baseData;
-            }
+            return history;
         }
 
         private void Initialize(string tradingSegment, string zerodhaProductType, string apiKey, string apiSecret,
