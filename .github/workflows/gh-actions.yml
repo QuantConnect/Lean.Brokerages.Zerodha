@@ -8,16 +8,18 @@ on:
     
 jobs:
   build:
-    runs-on: ubuntu-20.04
-    env:
-        QC_TEMPLATE_BROKERAGE_KEY: ${{ secrets.QC_TEMPLATE_BROKERAGE_KEY }}
-        QC_TEMPLATE_BROKERAGE_SECRET: ${{ secrets.QC_TEMPLATE_BROKERAGE_SECRET }}
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Free space
-        run: df -h && rm -rf /opt/hostedtoolcache* && df -h
+      - name: Liberate disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          large-packages: false
+          docker-images: false
+          swap-storage: false
 
       - name: Checkout Lean Same Branch
         id: lean-same-branch
@@ -42,10 +44,10 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: quantconnect/lean:foundation
-          options: --workdir /__w/Lean.Brokerages.Zerodha/Lean.Brokerages.Zerodha -v /home/runner/work:/__w
+          options: --workdir /__w/Lean.Brokerages.Zerodha/Lean.Brokerages.Zerodha -v /home/runner/work:/__w -e QC_JOB_USER_ID=${{ secrets.JOB_USER_ID }} -e QC_API_ACCESS_TOKEN=${{ secrets.API_ACCESS_TOKEN }} -e QC_JOB_ORGANIZATION_ID=${{ secrets.JOB_ORGANIZATION_ID }}
           shell: bash
           run: |
             # Build
-            dotnet build /p:Configuration=Release /v:quiet /p:WarningLevel=1 QuantConnect.ZerodhaBrokerage.sln
+            dotnet build /p:Configuration=Release /v:quiet /p:WarningLevel=1 QuantConnect.ZerodhaBrokerage.sln && \
             # Run Tests
             dotnet test ./QuantConnect.ZerodhaBrokerage.Tests/bin/Release/QuantConnect.ZerodhaBrokerage.Tests.dll
