@@ -1,4 +1,7 @@
 {
+	"name" : "Zerodha",
+	"logo-url" : "https://cdn.quantconnect.com/i/tu/zerodha-logo.svg",
+	"min-deposit" : "None",
 	"description": "The Zerodha integration provides access to Indian Equities on the NSE and BSE, and a streaming data feed. On our cloud platform, we only support live trading.",
 	
 	"platforms-features": [
