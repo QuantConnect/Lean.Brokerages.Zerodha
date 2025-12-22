@@ -39,10 +39,10 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using QuantConnect.Api;
-using RestSharp;
 using Order = QuantConnect.Orders.Order;
 using OrderType = QuantConnect.Orders.OrderType;
 using Tick = QuantConnect.Data.Market.Tick;
+using System.Net.Http;
 
 namespace QuantConnect.Brokerages.Zerodha
 {
@@ -1372,8 +1372,8 @@ namespace QuantConnect.Brokerages.Zerodha
                 {
                     information.Add("organizationId", organizationId);
                 }
-                var request = new RestRequest("modules/license/read", Method.POST) { RequestFormat = DataFormat.Json };
-                request.AddParameter("application/json", JsonConvert.SerializeObject(information), ParameterType.RequestBody);
+                // Create HTTP request
+                using var request = ApiUtils.CreateJsonPostRequest("modules/license/read", information);
                 api.TryRequest(request, out ModulesReadLicenseRead result);
                 if (!result.Success)
                 {
