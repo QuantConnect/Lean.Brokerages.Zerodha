@@ -22,13 +22,13 @@ This repository hosts the Zerodha Brokerage Plugin Integration with the QuantCon
 
 [Zerodha](https://zerodha.com/) was founded by Nithin Kamath in 2010 with the goal to break all barriers that traders and investors face in India in terms of cost, support, and technology. Zerodha provides access to India Equities for clients in India with no minimum balance required. Zerodha also provides a mutual fund investment platform and an interactive portfolio dashboard.
 
-For more information about the Zerodha brokerage, see the [QuantConnect-Zerodha Integration Page](https://www.quantconnect.com/docs/v2/our-platform/live-trading/brokerages/zerodha).
+For more information about the Zerodha brokerage, see the [QuantConnect-Zerodha Integration Page](https://www.quantconnect.com/docs/v2/cloud-platform/live-trading/brokerages/unsupported-brokerages).
 
 ## Using the Brokerage Plugin
   
 ### Deploying Zerodha with VSCode User Interace
 
-  You can deploy using a visual interface in the QuantConnect cloud. For instructions, see the [QuantConnect-Zerodha brokerage Integration Page](https://www.quantconnect.com/docs/v2/our-platform/live-trading/brokerages/zerodha). 
+  You can deploy using a visual interface in the QuantConnect cloud. For instructions, see the [QuantConnect-Zerodha brokerage Integration Page](https://www.quantconnect.com/docs/v2/cloud-platform/live-trading/brokerages/unsupported-brokerages). 
   
   ![deploy-zerodha](https://user-images.githubusercontent.com/38889814/188248274-e9801f4b-ec42-4b05-bba4-77b1ad58ba93.gif)
 
@@ -38,7 +38,7 @@ For more information about the Zerodha brokerage, see the [QuantConnect-Zerodha 
 
 Follow these steps to start local live trading with the Zerodha brokerage:
 
-1.  Open a terminal in your [CLI root directory](https://www.quantconnect.com/docs/v2/lean-cli/initialization/directory-structure#02-lean-init).
+1.  Open a terminal in your [CLI root directory](https://www.quantconnect.com/docs/v2/lean-cli/initialization/organization-workspaces#03-Directory-Structure).
 2.  Run `lean live "<projectName>`" to start a live deployment wizard for the project in ./`<projectName>` and then enter the brokerage number.
 
     ```
@@ -177,7 +177,7 @@ SetBrokerageModel(BrokerageName.Zerodha, AccountType.Cash);
 SetBrokerageModel(BrokerageName.Zerodha, AccountType.Margin);
 ```
 
-[Read Documentation](https://www.quantconnect.com/docs/v2/our-platform/live-trading/brokerages/zerodha)
+[Read Documentation](https://www.quantconnect.com/docs/v2/cloud-platform/live-trading/brokerages/unsupported-brokerages)
 
 ### Fees
 
@@ -198,7 +198,7 @@ To check the latest fees, see the [Charges page](https://zerodha.com/charges#tab
 
 We model buying power and margin calls to ensure your algorithm stays within the margin requirements.
 
-[Read Documentation](https://www.quantconnect.com/docs/v2/our-platform/live-trading/brokerages/zerodha)
+[Read Documentation](https://www.quantconnect.com/docs/v2/cloud-platform/live-trading/brokerages/unsupported-brokerages)
 
 #### Buying Power
 
