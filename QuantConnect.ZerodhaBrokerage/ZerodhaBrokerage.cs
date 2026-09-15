@@ -21,6 +21,7 @@ using QuantConnect.Configuration;
 using QuantConnect.Data;
 using QuantConnect.Data.Market;
 using QuantConnect.Interfaces;
+using QuantConnect.Lean.Engine.Results;
 using QuantConnect.Logging;
 using QuantConnect.Orders;
 using QuantConnect.Orders.Fees;
@@ -986,6 +987,9 @@ namespace QuantConnect.Brokerages.Zerodha
             };
             subscriptionManager.UnsubscribeImpl += (s, t) => Unsubscribe(s);
             SubscriptionManager = subscriptionManager;
+
+            DeploymentDetailsHelper.Add("zerodha-trading-segment", tradingSegment);
+            DeploymentDetailsHelper.Add("zerodha-product-type", zerodhaProductType);
 
             ValidateSubscription();
             Log.Trace("ZerodhaBrokerage(): Zerodha Brokerage initialized");
