@@ -29,6 +29,7 @@
   <ItemGroup>
 	<PackageReference Include="NodaTime" Version="3.0.5" />
     <PackageReference Include="QuantConnect.Brokerages" Version="2.5.*" />
+    <PackageReference Include="QuantConnect.Lean.Engine" Version="2.5.*" />
   </ItemGroup>
 	
 </Project>
