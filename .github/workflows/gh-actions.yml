@@ -2,16 +2,17 @@ name: Build & Test
 
 on:
   push:
-    branches: ['*']
+    branches: [master]
   pull_request:
     branches: [master]
     
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.head.repo.full_name || github.repository }}-${{ github.head_ref || github.ref_name }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: self-hosted
     container:
         image: quantconnect/lean:foundation
